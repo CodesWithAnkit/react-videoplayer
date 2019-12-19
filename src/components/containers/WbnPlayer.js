@@ -5,27 +5,26 @@ import Playlist from '../containers/Playlist';
 import StyledWbnPlayer from '../styles/StyledWbnPlayer';
 
 const theme = {
-  bgcolor: "#353535",
-  bgcolorItem: "#414141",
-  bgcolorItemActive: "#405c63",
-  bgcolorPlayed: "#526d4e",
-  border: "none",
-  borderPlayed: "none",
-  color : "#fff",
+  bgcolor: '#353535',
+  bgcolorItem: '#414141',
+  bgcolorItemActive: '#405c63',
+  bgcolorPlayed: '#526d4e',
+  border: 'none',
+  borderPlayed: 'none',
+  color: '#fff'
 };
 
 const themeLight = {
-  bgcolor: "#fff",
-  bgcolorItem: "#fff",
-  bgcolorItemActive: "#80a7b1",
-  bgcolorPlayed: "#7d9979",
-  border: "1px solid #353535",
-  borderPlayed: "none",
-  color : "#353535",
+  bgcolor: '#fff',
+  bgcolorItem: '#fff',
+  bgcolorItemActive: '#80a7b1',
+  bgcolorPlayed: '#7d9979',
+  border: '1px solid #353535',
+  borderPlayed: 'none',
+  color: '#353535'
 };
 
-const WbnPlayer = props => {
-
+const WbnPlayer = ({ match, history, location }) => {
   const videos = JSON.parse(document.querySelector('[name="videos"]').value);
 
   const [state, setState] = useState({
@@ -33,20 +32,40 @@ const WbnPlayer = props => {
     activeVideo: videos.playlist[0],
     nightMode: true,
     playlistId: videos.playlistId,
-    autoplay: false,
+    autoplay: false
   });
 
-  const nightModeCallback = () => {
+  //   useEffect
+  useEffect(() => {
+    const videoId = match.params.activeVideo;
+    if (videoId !== undefined) {
+      const newActiveVideo = state.videos.findIndex(
+        video => video.id === videoId
+      );
+      setState(prev => ({
+        ...prev,
+        activeVideo: prev.videos[newActiveVideo],
+        autoplay: location.autoplay
+      }));
+    } else {
+      history.push({
+        pathname: `/${state.activeVideo.id}`,
+        autoplay: false
+      });
+    }
+  }, [
+    history,
+    location.autoplay,
+    match.params.activeVideo,
+    state.activeVideo.id,
+    state.videos
+  ]);
 
-  }
+  const nightModeCallback = () => {};
 
-  const endCallback = () => {
+  const endCallback = () => {};
 
-  }
-
-  const progressCallback = () => {
-
-  }
+  const progressCallback = () => {};
 
   return (
     <ThemeProvider theme={state.nightMode ? theme : themeLight}>
@@ -67,7 +86,7 @@ const WbnPlayer = props => {
         </StyledWbnPlayer>
       ) : null}
     </ThemeProvider>
-  )
-}
+  );
+};
 
 export default WbnPlayer;
